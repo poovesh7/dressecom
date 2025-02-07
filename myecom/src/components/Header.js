@@ -31,7 +31,7 @@ export default function Header() {
         width={80}
          // Alt text for accessibility
         className="m-2 rounded"
-      />Kevin Shops</h3>
+      />Kevin Shop</h3>
         </div>
 
         {/* Navbar Section */}
