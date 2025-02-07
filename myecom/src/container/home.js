@@ -13,11 +13,13 @@ export default function Home() {
   const  path  = useLocation();
   console.log(path.pathname === '/',path.pathname)
   console.log(path.pathname === 'signup',path.pathname)
+  console.log(path.pathname === 'success',path.pathname)
   return (
     <div>
       {
 path.pathname !== '/'&&
 path.pathname !== '/signup'&&
+path.pathname !== '/success'&&
       <Header />
       }
       <Routes>
