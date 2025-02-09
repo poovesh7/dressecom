@@ -26,12 +26,13 @@ export default function Header() {
         <div className="container text-center py-2">
           <h3 className="fw-bold m-0">
             <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS78ZRAvsOF75y3on5Iw_avdkFXInwiayJKVQ&s"
+            src="/images/image.jpg"
+            className="rounded-circle"
         height={50}
         width={80}
          // Alt text for accessibility
-        className="m-2 rounded"
-      />Kevin Shop</h3>
+       
+      /> Kevin Shops</h3>
         </div>
 
         {/* Navbar Section */}

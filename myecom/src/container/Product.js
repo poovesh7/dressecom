@@ -18,7 +18,7 @@ export default function Product() {
   const [alert, setAlert] = useState(false);
 
   if (!props) {
-    return <h2 className="text-center mt-4">Product not found</h2>;
+    return <h2 className="text-center mt-5">Product not found</h2>;
   }
 
   const element = list.find((item) => item.id === props.id);
@@ -30,7 +30,7 @@ export default function Product() {
   };
 
   return (
-    <div className="card m-2">
+    <div className="card mt-5">
       {/* Display alert message */}
       {alert && <div className="alert alert-success">Item added to cart</div>}
 
@@ -44,7 +44,7 @@ export default function Product() {
         />
       </div>
 
-      <div className="card-body">
+      <div className="card-body mt-5">
         <h5 className="card-title">{props.name}</h5>
         <h6>Price: {`$${props.price}`}</h6>
         <h6 className="card-size">{props.size}</h6>

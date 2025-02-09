@@ -2,7 +2,7 @@ import React from "react";
 
 export default function ProductListItem({ image, name, price, size, count, incrementItem, decrementItem, removeItem }) {
   return (
-    <div className="m-2 d-flex justify-content-center align-items-center">
+    <div className="mt-5 d-flex justify-content-center align-items-center">
       {/* Product Image */}
       <div>
         <img
