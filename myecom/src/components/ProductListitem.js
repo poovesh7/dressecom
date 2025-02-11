@@ -17,7 +17,7 @@ export default function ProductListItem({ image, name, price, size, count, incre
       {/* Product Details & Actions */}
       <div className="ms-4">
         <h5 className="mt-4">{name}</h5>
-        <h6>Price: {`$${price}`}</h6>
+        <h6>Price: {`$${(price * count).toFixed(2)}`}</h6> {/* Update price dynamically */}
         <h6 className="size">{size}</h6>
 
         <div className="mt-3 d-flex align-items-center">
@@ -30,7 +30,7 @@ export default function ProductListItem({ image, name, price, size, count, incre
           <span className="mx-3">Quantity: {count}</span>
 
           {/* Decrement Button */}
-          <button className="btn btn-success" onClick={decrementItem}>
+          <button className="btn btn-success" onClick={decrementItem} disabled={count <= 1}>
             -
           </button>
         </div>
