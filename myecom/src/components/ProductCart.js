@@ -10,7 +10,7 @@ export default function ProductCart({ id, image, name, price, size }) {
     <div
       className="card m-3 border border-2 border-success shadow-sm transition mt-5"
       style={{
-        width: 200,
+        width: "200",
         cursor: "pointer",
         transition: "transform 0.3s ease, box-shadow 0.3s ease",
       }}

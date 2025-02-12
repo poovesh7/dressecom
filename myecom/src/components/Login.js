@@ -20,9 +20,10 @@ const Login = () => {
     try {
       const response = await login(credentials);
       localStorage.setItem("token", response.data.access);
+      localStorage.setItem("username", credentials.username); // Store username
       navigate("/dashboard");
     } catch (error) {
-      setError("Invalid Password! Please try again.");
+      setError("Invalid Username or Password! Please try again.");
     }
   };
 
@@ -63,11 +64,20 @@ const Login = () => {
               />
               <button
                 type="button"
-                className="btn border-0 bg-transparent  rounded"
+                className="btn border-0 bg-transparent rounded"
                 onClick={togglePasswordVisibility}
-                style={{ position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)" }}
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
               >
-                <i className={`bi ${passwordVisible ? "bi-eye-fill" : "bi-eye-slash-fill"}`}></i>
+                <i
+                  className={`bi ${
+                    passwordVisible ? "bi-eye-fill" : "bi-eye-slash-fill"
+                  }`}
+                ></i>
               </button>
             </div>
           </div>

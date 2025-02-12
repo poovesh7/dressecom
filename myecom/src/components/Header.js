@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCartPlus } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,11 +11,26 @@ export default function Header() {
   const list = useSelector((state) => state.cart.list) || [];
   const [selectedOption, setSelectedOption] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [username, setUsername] = useState("");
+
+  // Check if the user is logged in and get the username from localStorage
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+  }, []);
 
   const handleChange = (event) => {
     const value = event.target.value;
     setSelectedOption(value);
     dispatch(setCategory(value));
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    navigate("/");
   };
 
   return (
@@ -26,13 +41,14 @@ export default function Header() {
         <div className="container text-center py-2">
           <h3 className="fw-bold m-0">
             <img
-            src="/images/image.jpg"
-            className="rounded-circle"
-        height={50}
-        width={80}
-         // Alt text for accessibility
-       
-      /> Kevin Shops</h3>
+              src="/images/image.jpg"
+              className="rounded-circle"
+              height={50}
+              width={80}
+              alt="Logo"
+            />
+            Kevin Shops
+          </h3>
         </div>
 
         {/* Navbar Section */}
@@ -118,11 +134,20 @@ export default function Header() {
                 <Nav.Item>
                   <Dropdown as={ButtonGroup}>
                     <Dropdown.Toggle className="ms-5" variant="primary" id="dropdownMenuButton1">
-                      <i className="bi bi-person-circle"></i> My Profile
+                      <i className="bi bi-person-circle"></i>{" "}
+                      {username ? username : "My Profile"}
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
-                      <Dropdown.Item href="/">Login</Dropdown.Item>
-                      <Dropdown.Item href="signup">SignUp</Dropdown.Item>
+                      {username ? (
+                        <>
+                          <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+                        </>
+                      ) : (
+                        <>
+                          <Dropdown.Item href="/">Login</Dropdown.Item>
+                          <Dropdown.Item href="/signup">SignUp</Dropdown.Item>
+                        </>
+                      )}
                     </Dropdown.Menu>
                   </Dropdown>
                 </Nav.Item>

@@ -7,10 +7,12 @@
 # ]
 
 from django.urls import path
-from .views import SignupView, LoginView
+from .views import SignupView, LoginView, GetUserListView
 
 urlpatterns = [
-    path('signup/', SignupView.as_view(), name='signup'),  # Endpoint: /api/signup/
-    path('login/', LoginView.as_view(), name='login'),      # Endpoint: /api/login/
+    path('signup/', SignupView.as_view(), name='signup'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('get-users/', GetUserListView.as_view(), name='get_users'),
 ]
+
 
