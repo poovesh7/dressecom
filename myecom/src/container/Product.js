@@ -30,41 +30,48 @@ export default function Product() {
   };
 
   return (
-    <div className="card mt-5">
-      {/* Display alert message */}
-      {alert && <div className="alert alert-success">Item added to cart</div>}
+    <div className="d-flex justify-content-center p-3">
+      <div className="card mt-3">
+        {/* Display alert message */}
+        {alert && <div className="alert alert-success">Item added to cart</div>}
 
-      <div>
-        <img
-          src={props.image}
-          height={250}
-          width={300}
-          alt={props.name}
-          className="mt-2 rounded"
-        />
-      </div>
+        <div>
+          <img
+            src={props.image}
+            height={250}
+            width={300}
+            alt={props.name}
+            className="mt-2 rounded"
+          />
+        </div>
 
-      <div className="card-body mt-5">
-        <h5 className="card-title">{props.name}</h5>
-        <h6>Price: {`$${props.price}`}</h6>
-        <h6 className="card-size">{props.size}</h6>
+        <div className="card-body mt-5">
+          <h5 className="card-title">{props.name}</h5>
+          <h6>Price: {`$${props.price}`}</h6>
+          <h6 className="card-size">{props.size}</h6>
 
-        {/* Always show "Buy Now" and "Add to Cart" buttons */}
-        <button className="btn btn-success"onClick={()=> navigate(`/checkout/${props.id}`)}>Buy Now</button>
-
-        {/* Show either "Go To Cart" or "Add To Cart" based on availability */}
-        {element?.count > 0 ? (
+          {/* Always show "Buy Now" and "Add to Cart" buttons */}
           <button
-            className="ms-3 btn btn-warning"
-            onClick={() => navigate("/cart")}
+            className="btn btn-success"
+            onClick={() => navigate(`/checkout/${props.id}`)}
           >
-            Go To Cart
+            Buy Now
           </button>
-        ) : (
-          <button className="ms-3 btn btn-success" onClick={addToCart}>
-            Add To Cart
-          </button>
-        )}
+
+          {/* Show either "Go To Cart" or "Add To Cart" based on availability */}
+          {element?.count > 0 ? (
+            <button
+              className="ms-3 btn btn-warning"
+              onClick={() => navigate("/cart")}
+            >
+              Go To Cart
+            </button>
+          ) : (
+            <button className="ms-3 btn btn-success" onClick={addToCart}>
+              Add To Cart
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

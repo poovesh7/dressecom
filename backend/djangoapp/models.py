@@ -1,41 +1,25 @@
+
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class CustomUser(AbstractUser):
-    email = models.EmailField(unique=True)
-    password = models.CharField(max_length=128)
+    ROLE_CHOICES = (
+        ('Admin', 'Admin'),
+        ('Retailers', 'Retailers'),
+        ('Customer', 'Customer'),  # Added Customer Role
+    )
+    role = models.CharField(max_length=50, choices=ROLE_CHOICES,)
 
     def __str__(self):
         return self.username
 
-# # from django.db import models
-# # from django.contrib.auth.models import AbstractUser
+class Customer(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='customer_profile')
+    address = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=15)
+    date_of_birth = models.DateField(null=True, blank=True)
+    login_role = models.CharField(max_length=15, default='Customer')  # Added default value
 
-# # class CustomUser(AbstractUser):
-# #     email = models.EmailField(unique=True)
-# #     password = models.CharField(max_length=128)
-
-# #     groups = models.ManyToManyField(
-# #         "auth.Group",
-# #         related_name="customuser_set",
-# #         blank=True
-# #     )
-# #     user_permissions = models.ManyToManyField(
-# #         "auth.Permission",
-# #         related_name="customuser_permissions_set",
-# #         blank=True
-# #     )
-
-# #     def __str__(self):
-# #         return self.username
-
-
-
-# from django.db import models
-# from django.contrib.auth.models import AbstractUser
-
-# class CustomUser(AbstractUser):
-#     email = models.EmailField(unique=True)  # Ensuring email is unique
-
-#     def __str__(self):
-#         return self.username
+    def __str__(self):
+        return f"{self.user.username}'s Profile"

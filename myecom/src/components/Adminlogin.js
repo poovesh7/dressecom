@@ -4,39 +4,53 @@ import { login } from "../api";
 import { useDispatch } from "react-redux";
 import { setUserList } from "../redux/reducer/user";
 
-const Login = () => {
+const Adminlogin = () => {
   const dispatch = useDispatch();
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
-    role:"Customer"
+    role:"",
   });
+  const [selectedRole, setSelectedRole] = useState(""); // State for selected role
   const [error, setError] = useState("");
-  const [passwordVisible, setPasswordVisible] = useState(false); // State for toggling password visibility
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
   };
 
+  const handleRoleChange = (e) => {
+    setSelectedRole(e.target.value); // Store selected role
+  };
+
   const handleSubmit = async (e) => {
-    console.log({credentials})
     e.preventDefault();
+    console.log({...credentials})
     try {
-      const response = await login(credentials);
-      if(response.data){
-        dispatch(setUserList(response.data.user));
+      const response = await login({...credentials,role:selectedRole});
+      if (response.data) {
+        const user = response.data.user;
+
+        dispatch(setUserList(user));
+        localStorage.setItem("token", response.data.access);
+        localStorage.setItem("username", credentials.username);
+        // Navigate based on role
+        if (user.role === "Admin") {
+          navigate("/Admindashboard");
+        } else if (user.role === "Retailers") {
+          navigate("/Retailerdashboard");
+        } else {
+          navigate("/dashboard");
+        }
       }
-      localStorage.setItem("token", response.data.access);
-      localStorage.setItem("username", credentials.username); // Store username
-      navigate("/dashboard");
     } catch (error) {
       setError("Invalid Username or Password! Please try again.");
     }
   };
 
   const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible); // Toggle password visibility
+    setPasswordVisible(!passwordVisible);
   };
 
   return (
@@ -63,7 +77,7 @@ const Login = () => {
             <label className="form-label">Password</label>
             <div className="input-group">
               <input
-                type={passwordVisible ? "text" : "password"} // Toggle between text and password
+                type={passwordVisible ? "text" : "password"}
                 className="form-control"
                 name="password"
                 placeholder="Enter your password"
@@ -89,33 +103,29 @@ const Login = () => {
               </button>
             </div>
           </div>
+          <div className="mb-3 position-relative">
+            <label className="form-label fw-bold">Role</label>
+            <select
+              className="form-select"
+              name="role"
+              value={selectedRole}
+              onChange={handleRoleChange}
+              required
+            >
+              <option value="">Select Role</option>
+              <option value="Admin">Admin</option>
+              <option value="Retailers">Retailers</option>
+            </select>
+          </div>
           <button type="submit" className="btn btn-primary w-100">
             Login
           </button>
         </form>
-        <div className="text-center mt-3">
-          <p>
-            Don't have an account?{" "}
-            <a href="/signup" className="text-primary">
-              Sign Up
-            </a>
-          </p>
-
-          
-        </div>
-        <div className="text-center mt-3">
-          <p>
-            Admin & Retailers Login Here {" "}
-            <a href="/Adminlogin" className="text-primary">
-              Login
-            </a>
-          </p>
-
-          
-        </div>
+        <div className="text-center mt-3"></div>
+      
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Adminlogin;

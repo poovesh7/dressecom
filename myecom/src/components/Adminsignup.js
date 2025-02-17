@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signup } from "../api"; // Ensure you have the signup function in api.js
 
-const Signup = () => {
+const Adminsignup = () => {
     const [userData, setUserData] = useState({
         username: "",
         email: "",
         password: "",
-         // Added role to state
+        role: "", // Added role to state
     });
 
     const [error, setError] = useState("");
@@ -72,7 +72,22 @@ const Signup = () => {
                                         required
                                     />
                                 </div>
-                               
+                                <div className="mb-3">
+                                    <label className="form-label" htmlFor="role">Role</label>
+                                    <select
+                                        className="form-select"
+                                        id="role"
+                                        name="role"
+                                        value={userData.role}
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        <option value="">Select Role</option>
+                                        <option value="Admin">Admin</option>
+                                        <option value="Retailers">Retailers</option>
+                                        <option value="Customer">Customer</option>
+                                    </select>
+                                </div>
                                 <button type="submit" className="btn btn-primary w-100">Signup</button>
                             </form>
                         </div>
@@ -83,4 +98,4 @@ const Signup = () => {
     );
 };
 
-export default Signup;
+export default Adminsignup;

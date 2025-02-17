@@ -9,16 +9,18 @@ export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const list = useSelector((state) => state.cart.list) || [];
+    const userList = useSelector((state) => state.user.userList) || [];
+    console.log({userList})
   const [selectedOption, setSelectedOption] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState(userList?.username||"");
 
   // Check if the user is logged in and get the username from localStorage
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
-    if (storedUsername) {
-      setUsername(storedUsername);
-    }
+    // const storedUsername = localStorage.getItem("username");
+    // if (storedUsername) {
+    //   setUsername(storedUsername);
+    // }
   }, []);
 
   const handleChange = (event) => {
@@ -36,7 +38,7 @@ export default function Header() {
   return (
     <>
       {/* Fixed Navbar */}
-      <div className="bg-primary text-white fixed-top">
+      <div className="bg-primary text-white fixed-top mb-10">
         {/* Centered Title */}
         <div className="container text-center py-2">
           <h3 className="fw-bold m-0">
@@ -52,14 +54,14 @@ export default function Header() {
         </div>
 
         {/* Navbar Section */}
-        <Navbar expand="lg" className="bg-primary text-white" variant="dark">
+        <Navbar expand="lg" className="bg-primary text-white mb-20" variant="dark">
           <Container>
             {/* Home Button (Visible only on lg and above) */}
-            <div className="d-none d-lg-block">
+           { userList?.role=== 'Customer' &&<div className="d-none d-lg-block">
               <button className="btn btn-success" onClick={() => navigate("/dashboard")}>
                 Home
               </button>
-            </div>
+            </div>}
 
             {/* Navbar Toggle Button */}
             <Navbar.Toggle aria-controls="navbar-content" className="ms-auto" />
@@ -84,7 +86,7 @@ export default function Header() {
                 </Nav.Item>
 
                 {/* Cart Button */}
-                <Nav.Item>
+               {userList.role === 'Customer'&& <> <Nav.Item>
                   <button
                     className="btn btn-success d-flex align-items-center position-relative"
                     onClick={() => navigate("/cart")}
@@ -129,6 +131,8 @@ export default function Header() {
                     </option>
                   </select>
                 </Nav.Item>
+                </>
+}
 
                 {/* Profile Dropdown */}
                 <Nav.Item>
@@ -140,6 +144,9 @@ export default function Header() {
                     <Dropdown.Menu>
                       {username ? (
                         <>
+                          <Dropdown.Item onClick={() => navigate("/profile")}>
+                            My Profile
+                          </Dropdown.Item>
                           <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
                         </>
                       ) : (
