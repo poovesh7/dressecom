@@ -44,12 +44,12 @@ export default function Header() {
           <h3 className="fw-bold m-0">
             <img
               src="/images/image.jpg"
-              className="rounded-circle"
+              className="rounded-circle me-3"
               height={50}
               width={80}
               alt="Logo"
             />
-            Kevin Shops
+              Kevin Shops
           </h3>
         </div>
 

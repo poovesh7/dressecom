@@ -1,65 +1,89 @@
-from django.contrib.auth import get_user_model
+
+from django.contrib.auth import get_user_model, authenticate
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import authenticate
+from django.core.mail import send_mail
+from .serializers import UserSerializer
+from django.conf import settings
 
-from .serializers import UserSerializer  
-
-
-
-
-# Get the custom user model
 User = get_user_model()
 
+
 class SignupView(APIView):
+    """
+    Handles user registration and sends an email with login credentials.
+    """
+
     def post(self, request):
         username = request.data.get('username')
         email = request.data.get('email')
         password = request.data.get('password')
-        role = request.data.get('role')
+        role = request.data.get('role', 'customer')  # Default role is 'customer'
 
-        # Check if the username already exists
+        if not username or not email or not password:
+            return Response({'error': 'All fields are required'}, status=status.HTTP_400_BAD_REQUEST)
+
         if User.objects.filter(username=username).exists():
             return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Create the new user
-        user = User.objects.create_user(username=username, email=email, password=password,role=role)
-        return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
+        try:
+            user = User.objects.create_user(username=username, email=email, password=password)
+            user.role = role  # Assign role if using custom user model
+            user.save()
 
+            # Send email with username and password
+            subject = "Your Account Details"
+            message = f"""
+            Hello {username},
+
+            Your account has been successfully created.
+
+            Username: {username}
+            Password: {password} 
+            Role: {role}
+
+            You can log in using your credentials.
+
+            Regards,
+            Kvin Shops
+            """
+
+            send_mail(subject, message, settings.EMAIL_HOST_USER, [email], fail_silently=False)
+
+            
+            print(send_mail)
+
+            return Response({'message': 'User created successfully. Email sent.'}, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class LoginView(APIView):
+    """
+    Handles user authentication and JWT token generation.
+    """
+
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
-        role = request.data.get('role')
-        print(request.data)
-        user = authenticate(username=username, password=password, role=role)
 
-        if user is not None:
-            if user.role == 'Admin':
-                refresh = RefreshToken.for_user(user)
-                user_data = UserSerializer(user).data  # Serialize user data
-                return Response({
-                'access': str(refresh.access_token),
-                'user': user_data
-            }, status=status.HTTP_200_OK)
-                
-            if user.role != role:
-                return Response({'error': 'Role does not match'}, status=status.HTTP_400_BAD_REQUEST)
-            
-            refresh = RefreshToken.for_user(user)
-            user_data = UserSerializer(user).data  # Serialize user data
-            return Response({
-                'access': str(refresh.access_token),
-                'user': user_data
-            }, status=status.HTTP_200_OK)
-        
-        return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    
+        if not username or not password:
+            return Response({'error': 'Username and password are required'}, status=status.HTTP_400_BAD_REQUEST)
 
+        user = authenticate(username=username, password=password)
 
+        if user is None:
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        refresh = RefreshToken.for_user(user)
+        user_data = UserSerializer(user).data  
+
+        return Response({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'user': user_data
+        }, status=status.HTTP_200_OK)
 
