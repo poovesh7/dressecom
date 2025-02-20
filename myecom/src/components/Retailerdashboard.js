@@ -11,12 +11,12 @@ const Retailerdashboard = () => {
   useEffect(() => {
     // Fetch data from backend API
     axios
-      .get("/api/retailerdashboard")
+      .get("http://127.0.0.1:8000/api/customers-retailers")
       .then((res) => {
-        setTotalSales(res.data.totalSales);
-        setTotalCustomers(res.data.totalCustomers);
-        setTopProducts(res.data.topProducts);
-        setTopCategories(res.data.topCategories);
+        // setTotalSales(res.data.totalSales);
+        setTotalCustomers(res.data.total_customers);
+        // setTopProducts(res.data.topProducts);
+        // setTopCategories(res.data.topCategories);
       })
       .catch((err) => console.error("Error fetching dashboard data:", err));
   }, []);

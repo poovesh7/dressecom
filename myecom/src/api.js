@@ -20,8 +20,8 @@ export const login = async (credentials) => {
 };
 
 // Example of making an authenticated request
-export const getUserData = async () => {
-    return axios.get(`${API_URL}customers-retailers/`);
+export const getUserData = async (count) => {
+    return axios.get(`${API_URL}customers-retailers/`,count);
 };
 
 
