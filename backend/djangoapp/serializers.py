@@ -11,4 +11,3 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 
-

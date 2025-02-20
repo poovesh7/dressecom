@@ -8,7 +8,29 @@ from django.core.mail import send_mail
 from .serializers import UserSerializer
 from django.conf import settings
 
+
+
 User = get_user_model()
+
+ # Ensure you have a serializer for the CustomUser model
+
+class CustomerRetailerListView(APIView):
+    def get(self, request):
+        customers = User.objects.filter(role='customer')
+        retailers = User.objects.filter(role='Retailers')
+
+        customer_count = customers.count()
+        retailer_count = retailers.count()
+
+        serializer = UserSerializer(customers | retailers, many=True)  # Merging Querysets
+
+        return Response({
+            "total_customers": customer_count,
+            "total_retailers": retailer_count,
+            
+        }, status=status.HTTP_200_OK)
+
+
 
 
 class SignupView(APIView):

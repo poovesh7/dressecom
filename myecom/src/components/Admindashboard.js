@@ -12,13 +12,15 @@ const Admindashboard = () => {
   useEffect(() => {
     // Fetch data from backend API
     axios
-      .get("/api/dashboard")
+      .get("http://127.0.0.1:8000/api/customers-retailers")
+
       .then((res) => {
-        setTotalSales(res.data.totalSales);
-        setTotalCustomers(res.data.totalCustomers);
-        setTotalRetailers(res.data.totalRetailers);
-        setTopProducts(res.data.topProducts);
-        setTopCategories(res.data.topCategories);
+        console.log(res.data)
+        // setTotalSales(res.data.totalSales);
+        setTotalCustomers(res.data.total_customers);
+        setTotalRetailers(res.data.total_retailers);
+        // setTopProducts(res.data.topProducts);
+        // setTopCategories(res.data.topCategories);
       })
       .catch((err) => console.error("Error fetching dashboard data:", err));
   }, []);
