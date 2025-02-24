@@ -8,8 +8,51 @@ from django.core.mail import send_mail
 from .serializers import UserSerializer
 from django.conf import settings
 
+from .models import *
+
+
 
 from rest_framework.permissions import IsAuthenticated
+
+from .models import Product, Category
+from .serializers import ProductSerializer, CategorySerializer
+from rest_framework import generics, permissions
+
+# Retailer can add a new product
+class ProductCreateView(generics.CreateAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(retailer=self.request.user)  # Set the logged-in user as the retailer
+
+# Retailer can update their product
+class ProductUpdateView(generics.UpdateAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Product.objects.filter(retailer=self.request.user)
+
+# Retailer can delete their product
+class ProductDeleteView(generics.DestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Product.objects.filter(retailer=self.request.user)
+
+# Retailer can view all their products
+class ProductListView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Product.objects.filter(retailer=self.request.user)
+
+# List all categories
+class CategoryListView(generics.ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
 
 
 User = get_user_model()
@@ -60,7 +103,7 @@ class SignupView(APIView):
             # Send email with username and password
             subject = "Your Account Details"
             message = f"""
-            Hello {username},
+            Hello {username} Welcome to Our Kevin Shops,
 
             Your account has been successfully created.
 
@@ -138,3 +181,4 @@ class ProfileView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

@@ -100,6 +100,9 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+
+MEDIA_ROOT='/media/'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email settings (secure configuration)
@@ -109,3 +112,9 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'rpoovesh@gmail.com')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'xznr evoe jtks gaqf')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # Place your static files here
+]
+
+MEDIA_ROOT=os.path.join(BASE_DIR,'static/media')

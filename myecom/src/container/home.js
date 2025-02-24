@@ -13,6 +13,8 @@ import Adminlogin from "../components/Adminlogin";
 import Admindashboard from "../components/Admindashboard";
 import Retailerdashboard from "../components/Retailerdashboard";
 import Adminsignup from "../components/Adminsignup";
+import AddProduct from "../components/AddProduct";
+
 
 export default function Home() {
   const path = useLocation();
@@ -45,6 +47,7 @@ export default function Home() {
         <Route path="/craete-account" element={<Adminsignup />} />
         <Route path="/retailerdashboard" element={<Retailerdashboard />} />
         <Route path="/retailerdashboard" element={<Retailerdashboard />} />
+        <Route path="/addproduct" element={<AddProduct />} />
       </Routes>
     </div>
   );
