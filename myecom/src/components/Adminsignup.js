@@ -33,7 +33,7 @@ const Adminsignup = () => {
                 <div className="col-md-6 col-lg-4">
                     <div className="card shadow-sm">
                         <div className="card-body">
-                            <h3 className="card-title text-center mb-4">Signup</h3>
+                            <h3 className="card-title text-center mb-4">Create User Account</h3>
                             {error && <p className="text-danger text-center">{error}</p>}
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-3">
@@ -88,7 +88,7 @@ const Adminsignup = () => {
                                         <option value="Customer">Customer</option>
                                     </select>
                                 </div>
-                                <button type="submit" className="btn btn-primary w-100">Signup</button>
+                                <button type="submit" className="btn btn-primary w-100">Create Account</button>
                             </form>
                         </div>
                     </div>

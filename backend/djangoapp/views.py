@@ -9,52 +9,63 @@ from .serializers import UserSerializer
 from django.conf import settings
 
 from .models import *
+# from rest_framework.authtoken.models import Token
 
 
 
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Product, Category
-from .serializers import ProductSerializer, CategorySerializer
-from rest_framework import generics, permissions
+from .models import Product
+from .serializers import ProductSerializer
+
 
 # Retailer can add a new product
-class ProductCreateView(generics.CreateAPIView):
-    serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
-    def perform_create(self, serializer):
-        serializer.save(retailer=self.request.user)  # Set the logged-in user as the retailer
+class ProductListCreate(APIView):
+    def get(self, request):
+        products = Product.objects.all()
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
 
-# Retailer can update their product
-class ProductUpdateView(generics.UpdateAPIView):
-    serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    def post(self, request):
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get_queryset(self):
-        return Product.objects.filter(retailer=self.request.user)
+class ProductDetail(APIView):
+    def get_object(self, product_id):
+        try:
+            return Product.objects.get(id=product_id)
+        except Product.DoesNotExist:
+            return None
 
-# Retailer can delete their product
-class ProductDeleteView(generics.DestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    def get(self, request, pk):
+        product = self.get_object(pk)
+        if product is None:
+            return Response({"detail": "Product not found."}, status=status.HTTP_404_NOT_FOUND)
+        serializer = ProductSerializer(product)
+        return Response(serializer.data)
 
-    def get_queryset(self):
-        return Product.objects.filter(retailer=self.request.user)
+    def put(self, request, pk):
+        product = self.get_object(pk)
+        if product is None:
+            return Response({"detail": "Product not found."}, status=status.HTTP_404_NOT_FOUND)
 
-# Retailer can view all their products
-class ProductListView(generics.ListAPIView):
-    serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAuthenticated]
+        serializer = ProductSerializer(product, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get_queryset(self):
-        return Product.objects.filter(retailer=self.request.user)
+    def delete(self, request, pk):
+        product = self.get_object(pk)
+        if product is None:
+            return Response({"detail": "Product not found."}, status=status.HTTP_404_NOT_FOUND)
 
-# List all categories
-class CategoryListView(generics.ListAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-
-
+        product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 User = get_user_model()
 
  # Ensure you have a serializer for the CustomUser model
