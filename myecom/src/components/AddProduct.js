@@ -1,125 +1,139 @@
-import React, { useState } from "react";
-import { Form, Button, Card, Alert, Spinner } from "react-bootstrap";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-const AddProduct = () => {
-  const [productData, setProductData] = useState({
-    name: "",
-    price: "",
-    category: "",
-    image: null,
-  });
+const AddProduct = ({ productId }) => {
+    const [productName, setProductName] = useState('');
+    const [price, setPrice] = useState('');
+    const [category, setCategory] = useState('');
+    const [image, setImage] = useState(null);
+    const [isUpdating, setIsUpdating] = useState(false);
 
-  const [categories, setCategories] = useState([
-    "Electronics",
-    "Clothing",
-    "Furniture",
-    "Books",
-    "Accessories",
-  ]); // Example categories, fetch from API if dynamic
-
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (e) => {
-    if (e.target.name === "image") {
-      setProductData({ ...productData, image: e.target.files[0] });
-    } else {
-      setProductData({ ...productData, [e.target.name]: e.target.value });
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setSuccessMessage("");
-    setErrorMessage("");
-
-    const formData = new FormData();
-    formData.append("name", productData.name);
-    formData.append("price", productData.price);
-    formData.append("category", productData.category);
-    if (productData.image) {
-      formData.append("image", productData.image);
-    }
-
-    try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/products/add/",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            
-          },
+    // Fetch product details when productId is available
+    useEffect(() => {
+        if (productId) {
+            setIsUpdating(true); // We are updating the product
+            axios.get(`http://localhost:8000/api/products/${productId}/`)
+                .then((response) => {
+                    const product = response.data;
+                    setProductName(product.name);
+                    setPrice(product.price);
+                    setCategory(product.category);
+                })
+                .catch((error) => {
+                    console.error('Error fetching product:', error);
+                });
+        } else {
+            setIsUpdating(false); // We're adding a new product, not updating
         }
-      );
-      setSuccessMessage("Product added successfully!");
-      setProductData({ name: "", price: "", category: "", image: null });
-    } catch (error) {
-      setErrorMessage("Error adding product. Please try again.");
-      console.error("Error adding product:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    }, [productId]);
 
-  return (
-    <div className="container mt-5">
-      <h2 className="text-center mb-4">Add Product</h2>
+    const handleNameChange = (e) => setProductName(e.target.value);
+    const handlePriceChange = (e) => setPrice(e.target.value);
+    const handleCategoryChange = (e) => setCategory(e.target.value);
+    const handleImageChange = (e) => setImage(e.target.files[0]);
 
-      {successMessage && <Alert variant="success">{successMessage}</Alert>}
-      {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+    const handleSubmit = (e) => {
+        e.preventDefault();
 
-      <Card className="shadow p-4">
-        <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3">
-            <Form.Label>Product Name</Form.Label>
-            <Form.Control
-              type="text"
-              name="name"
-              value={productData.name}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
+        const formData = new FormData();
+        formData.append('name', productName);
+        formData.append('price', price);
+        formData.append('category', category);
+        formData.append('image', image);
 
-          <Form.Group className="mb-3">
-            <Form.Label>Price (₹)</Form.Label>
-            <Form.Control
-              type="number"
-              name="price"
-              value={productData.price}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
+        const url = isUpdating
+            ? `http://localhost:8000/api/products/${productId}/`
+            : 'http://localhost:8000/api/products/';
 
-          <Form.Group className="mb-3">
-            <Form.Label>Category</Form.Label>
-            <Form.Select name="category" value={productData.category} onChange={handleChange} required>
-              <option value="">Select Category</option>
-              {categories.map((cat, index) => (
-                <option key={index} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
+        const method = isUpdating ? 'put' : 'post';
 
-          <Form.Group className="mb-3">
-            <Form.Label>Product Image</Form.Label>
-            <Form.Control type="file" name="image" onChange={handleChange} accept="image/*" />
-          </Form.Group>
+        axios({
+            method,
+            url,
+            data: formData,
+            headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        .then((response) => {
+            console.log('Product saved successfully:', response);
+            alert(isUpdating ? 'Product updated successfully!' : 'Product added successfully!');
+        })
+        .catch((error) => {
+            console.error('Error saving product:', error);
+        });
+    };
 
-          <Button variant="primary" type="submit" disabled={loading}>
-            {loading ? <Spinner as="span" animation="border" size="sm" /> : "Add Product"}
-          </Button>
-        </Form>
-      </Card>
-    </div>
-  );
+    const handleDelete = () => {
+        if (productId) {
+            axios.delete(`http://localhost:8000/api/products/${productId}/`)
+                .then((response) => {
+                    console.log('Product deleted successfully:', response);
+                    alert('Product deleted successfully!');
+                })
+                .catch((error) => {
+                    console.error('Error deleting product:', error);
+                });
+        }
+    };
+
+    return (
+        <div className="container mt-5">
+            <h2 className="text-center mb-4">{isUpdating ? 'Update Product' : 'Add a New Product'}</h2>
+            <form onSubmit={handleSubmit} className="form-group">
+                <div className="mb-3">
+                    <label className="form-label" htmlFor="productName">Product Name:</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="productName"
+                        value={productName}
+                        onChange={handleNameChange}
+                        required
+                    />
+                </div>
+                <div className="mb-3">
+                    <label className="form-label" htmlFor="price">Price:</label>
+                    <input
+                        type="number"
+                        className="form-control"
+                        id="price"
+                        value={price}
+                        onChange={handlePriceChange}
+                        required
+                    />
+                </div>
+                <div className="mb-3">
+                    <label className="form-label" htmlFor="category">Category:</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="category"
+                        value={category}
+                        onChange={handleCategoryChange}
+                        required
+                    />
+                </div>
+                <div className="mb-3">
+                    <label className="form-label" htmlFor="image">Image:</label>
+                    <input
+                        type="file"
+                        className="form-control"
+                        id="image"
+                        onChange={handleImageChange}
+                    />
+                </div>
+                <div className="text-center">
+                    <button type="submit" className="btn btn-primary">{isUpdating ? 'Update Product' : 'Add Product'}</button>
+                </div>
+            </form>
+
+            {/* Show delete button only when we are updating an existing product */}
+            {isUpdating && (
+                <div className="text-center mt-3">
+                    <button onClick={handleDelete} className="btn btn-danger">Delete Product</button>
+                </div>
+            )}
+        </div>
+    );
 };
 
 export default AddProduct;

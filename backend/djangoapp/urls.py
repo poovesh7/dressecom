@@ -7,10 +7,12 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('customers-retailers/', CustomerRetailerListView.as_view(), name='customer-retailer-list'),
     path('profile/',ProfileView.as_view(), name='profile'),
+
+    path('products/', ProductListCreate.as_view(), name='product-list-create'),
+    path('api/products/<int:pk>/', ProductDetail.as_view(), name='product-detail'),
     
-    path('items/', create_item, name='create-item'),
+  
     
-   
 ]
 
 
