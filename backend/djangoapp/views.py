@@ -5,54 +5,25 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.mail import send_mail
-from .serializers import UserSerializer
+from .serializers import *
 from django.conf import settings
+from rest_framework.decorators import api_view
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import *
 
 
-
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Product, Category
-from .serializers import ProductSerializer, CategorySerializer
-from rest_framework import generics, permissions
+@csrf_exempt 
+@api_view(['POST'])
+def create_item(request):
+    serializer = ItemSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# Retailer can add a new product
-class ProductCreateView(generics.CreateAPIView):
-    serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(retailer=self.request.user)  # Set the logged-in user as the retailer
-
-# Retailer can update their product
-class ProductUpdateView(generics.UpdateAPIView):
-    serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return Product.objects.filter(retailer=self.request.user)
-
-# Retailer can delete their product
-class ProductDeleteView(generics.DestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return Product.objects.filter(retailer=self.request.user)
-
-# Retailer can view all their products
-class ProductListView(generics.ListAPIView):
-    serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return Product.objects.filter(retailer=self.request.user)
-
-# List all categories
-class CategoryListView(generics.ListAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
 
 
 User = get_user_model()

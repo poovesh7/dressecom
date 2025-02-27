@@ -57,7 +57,7 @@ export default function Header() {
         <Navbar expand="lg" className="bg-primary text-white mb-20" variant="dark">
           <Container>
             {/* Home Button (Visible only on lg and above) */}
-           { userList?.role=== 'Customer' &&<div className="d-none d-lg-block">
+           { userList?.role=== 'customer' &&<div className="d-none d-lg-block">
               <button className="btn btn-success" onClick={() => navigate("/dashboard")}>
                 Home
               </button>
@@ -86,7 +86,7 @@ export default function Header() {
                 </Nav.Item>
 
                 {/* Cart Button */}
-               {userList.role === 'Customer'&& <> <Nav.Item>
+               {userList.role === 'customer'&& <> <Nav.Item>
                   <button
                     className="btn btn-success d-flex align-items-center position-relative"
                     onClick={() => navigate("/cart")}
