@@ -9,7 +9,7 @@ urlpatterns = [
     path('profile/',ProfileView.as_view(), name='profile'),
 
     path('products/', ProductListCreate.as_view(), name='product-list-create'),
-    path('api/products/<int:pk>/', ProductDetail.as_view(), name='product-detail'),
+    path('products/<int:pk>/', ProductDetail.as_view(), name='product-detail'),
     
   
     

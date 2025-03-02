@@ -2,7 +2,7 @@ import React from "react";
 import Header from "../components/Header";
 import Dashboard from "./Dashboard";
 import Product from "./Product";
-import { Route, Routes, useLocation, useParams } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Cart from "./Cart";
 import Checkout from "./Checkout";
 import Success from "./Success";
@@ -13,7 +13,8 @@ import Adminlogin from "../components/Adminlogin";
 import Admindashboard from "../components/Admindashboard";
 import Retailerdashboard from "../components/Retailerdashboard";
 import Adminsignup from "../components/Adminsignup";
-import AddProduct from "../components/AddProduct";
+
+import ManageProduct from "../components/ManageProduct";
 
 
 export default function Home() {
@@ -23,13 +24,15 @@ export default function Home() {
   console.log(path.pathname === "adminlogin", path.pathname);
   console.log(path.pathname === "success", path.pathname);
   console.log(path.pathname === "Adminsignup", path.pathname);
+
   return (
     <div>
       {path.pathname !== "/" &&
         path.pathname !== "/signup" &&
         path.pathname !== "/success" &&
         path.pathname !== "/Adminlogin" &&
-        path.pathname !== "/craete-account" && <Header />}
+        path.pathname !== "/craete-account" && 
+        <Header />}
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
@@ -47,7 +50,8 @@ export default function Home() {
         <Route path="/craete-account" element={<Adminsignup />} />
         <Route path="/retailerdashboard" element={<Retailerdashboard />} />
         <Route path="/retailerdashboard" element={<Retailerdashboard />} />
-        <Route path="/addproduct" element={<AddProduct />} />
+        
+        <Route path="/manageproduct" element={<ManageProduct />} />
       </Routes>
     </div>
   );
